@@ -25,7 +25,7 @@ class GoogleOAuth
 
     public function createGoogleClient($config, $scopes, $redirectRoute): void
     {
-        $this->oauthClient = new Client;
+        $this->oauthClient = new Client();
         $this->oauthClient->setAuthConfig($config);
         $this->oauthClient->addScope($scopes);
         $this->oauthClient->setRedirectUri($redirectRoute);

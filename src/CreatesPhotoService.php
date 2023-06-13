@@ -17,7 +17,7 @@ trait CreatesPhotoService
         if (!$this->photoservice) {
             $this->photoservice = new PhotosLibraryClient(
                 [
-                    'credentials' => (new GoogleOAuth)->getCredentials(),
+                    'credentials' => (new GoogleOAuth())->getCredentials(),
                 ]
             );
         }

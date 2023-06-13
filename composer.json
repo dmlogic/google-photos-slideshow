@@ -36,7 +36,7 @@
     "scripts": {
         "phpunit": "./vendor/bin/phpunit --testdox",
         "phpcs": "./vendor/bin/php-cs-fixer fix -v --diff --allow-risky=yes --verbose --format=txt --dry-run",
-        "phpcs-fix": "docker-compose exec -T project ./vendor/bin/php-cs-fixer fix -v --diff --allow-risky=yes --verbose --format=txt",
+        "phpcs-fix": "./vendor/bin/php-cs-fixer fix -v --diff --allow-risky=yes --verbose --format=txt src",
         "phpstan": "./vendor/bin/phpstan analyse ./src --level=0 --ansi"
     }
 }
