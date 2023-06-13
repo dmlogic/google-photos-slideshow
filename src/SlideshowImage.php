@@ -28,7 +28,7 @@ class SlideshowImage implements Arrayable
 
     private function url(): string
     {
-        return '/photos/'.$this->model->google_id.'.jpg';
+        return '/photos/' . $this->model->album_id . '/' . $this->model->google_id . '.jpg';
     }
 
     private function dateTaken(): string

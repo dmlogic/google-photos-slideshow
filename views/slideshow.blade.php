@@ -6,10 +6,17 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Slideshow</title>
+	<!-- EXTERNAL SERVICES  -->
+	<!-- Fonts and Icons is all we go outside for -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
 	<script src="https://kit.fontawesome.com/70bfe3d00e.js" crossorigin="anonymous"></script>
+	<!-- CSS -->
+	<!--
+		TVs have a long shelf life which likely means browsers that are not compatible with modern JS packaing.
+		Not interested in Babeling this so we're avoid Tailwind etc and going old-school basic CSS
+	 -->
 	<style>
 		* {
 			margin: 0;
@@ -36,7 +43,7 @@
 			background-position: center;
 			background-size: cover;
 			background-repeat: no-repeat;
-			background-image: url(photos/323/AMPTTLcCFsDyGh-R8cenM4vun0DyNrNBYJCc8Mxhv8W7SESpJ_rE9JUaoWsH2g2xr_vmsr_YYHllqCj2QlFpNlS7DSCTNV5vUg.jpg);
+			/* background-image: url(photos/323/AMPTTLcCFsDyGh-R8cenM4vun0DyNrNBYJCc8Mxhv8W7SESpJ_rE9JUaoWsH2g2xr_vmsr_YYHllqCj2QlFpNlS7DSCTNV5vUg.jpg); */
 		}
 
 		.caption {
@@ -101,10 +108,10 @@
 </head>
 
 <body>
-	<div id="slideshow" class="slideshow"></div>
+	<div class="slideshow"></div>
 	<div class="caption">
-		<div id="title" class="title">My title</div>
-		<div id="date" class="date">My Date</div>
+		<div class="title"></div>
+		<div class="date"></div>
 	</div>
 	<div class="controls">
 		<i id="previous" class="control fa-solid fa-caret-left hidden"></i>
@@ -114,13 +121,27 @@
 	<div class="loading">
 		<i class="fa-solid fa-wifi fa-bounce"></i>
 	</div>
+	<!-- SLIDESHOW LOGIC -->
 	<script>
-		var photoLog = [],
+		/**
+		 * As with CSS, we want to avoid modern build tools and indeed some modern JS.
+		 * Keeping it simple and old-school as working widely is better than bleeding edge in this case
+		 * At time of writing my "Smart TV" is Chrome 38 😬
+		 */
+		var photoHistory = [],
+			photoHistoryPosition = 0,
+			photoDelay = 2000,
 			controls = document.querySelector(".controls"),
 			loading = document.querySelector(".loading"),
 			toggle = document.querySelector("#toggle"),
-			previous = document.querySelector("#previous"),
-			movementTimer;
+			historyBack = document.querySelector("#previous"),
+			historyForward = document.querySelector("#next"),
+			imageElement = document.querySelector(".slideshow"),
+			titleElement = document.querySelector(".title"),
+			dateElement = document.querySelector(".date"),
+			movementTimer,
+			slideshowTimer,
+			nextImage;
 
 		function toggleControls() {
 			if (typeof movementTimer !== "undefined") {
@@ -132,7 +153,114 @@
 			}, 2000);
 		}
 
+		function performApiCall(path) {
+			try {
+				var xhr = new XMLHttpRequest()
+				xhr.open('GET', path, false)
+				xhr.send()
+
+				if (xhr.readyState == 4 && xhr.status == 200) {
+					return JSON.parse(xhr.responseText)
+				} else if (xhr.status <= 599 && xhr.status >= 403) {
+					throw 'AUTH_ERROR'
+				} else if (xhr.status <= 599 && xhr.status >= 400) {
+					throw 'SERVER_ERROR'
+				} else {
+					throw 'NETWORK_ERROR'
+				}
+			} catch (e) {
+				throw 'NETWORK_ERROR'
+			}
+		}
+
+		function primeNextImage(withData) {
+			nextImage = withData;
+			img = new Image();
+			img.src = nextImage.url;
+		}
+
+		function changeImageDisplay(imageData) {
+			imageElement.style.backgroundImage = "url('" + imageData.url + "')";
+			titleElement.innerText = imageData.album_title;
+			dateElement.innerText = imageData.date_taken;
+			updateHistory(imageData);
+		}
+
+		function updateHistory(imageData) {
+			if (photoHistoryPosition === 0) {
+				photoHistory.push(imageData);
+				if (photoHistory.length > 50) {
+					photoHistory.shift();
+				}
+			}
+
+			if (photoHistory.length > 0 && photoHistoryPosition !== photoHistory.length) {
+				historyBack.classList.remove("hidden")
+			} else {
+				historyBack.classList.add("hidden")
+			}
+
+			if (photoHistory.length > 0 && photoHistoryPosition > 0) {
+				historyForward.classList.remove("hidden")
+			} else {
+				historyForward.classList.add("hidden")
+			}
+		}
+
+		function displayPrimedImage() {
+			changeImageDisplay(nextImage)
+		}
+
+		function getNextImage() {
+			result = performApiCall('/photo/random');
+			primeNextImage(result);
+			slideshowTimer = setTimeout(slideTimerFinished, photoDelay);
+		}
+
+		function slideTimerFinished() {
+			displayPrimedImage(nextImage);
+			getNextImage()
+		}
+
+		function displayFirstImage() {
+			result = performApiCall('/photo/random');
+			primeNextImage(result);
+			displayPrimedImage(nextImage);
+			getNextImage()
+		}
+
+		function pauseSlideshow() {
+			clearTimeout(slideshowTimer);
+			slideshowTimer = null;
+			toggle.classList.remove('fa-pause');
+			toggle.classList.add('fa-play');
+		}
+
+		function resumeSlideshow() {
+			toggle.classList.remove('fa-play');
+			toggle.classList.add('fa-pause');
+			if (nextImage) {
+				displayPrimedImage(nextImage);
+				getNextImage()
+			}
+		}
+
+		function toggleClicked() {
+			if (slideshowTimer) {
+				pauseSlideshow();
+				return;
+			}
+			resumeSlideshow();
+		}
+
 		window.addEventListener("mousemove", toggleControls);
+		toggle.addEventListener("click", toggleClicked);
+
+		displayFirstImage();
+		/**
+# historyBack clicked
+# historyForward clicked
+		 */
 	</script>
 </body>
 
