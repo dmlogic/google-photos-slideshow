@@ -8,18 +8,10 @@ use DmLogic\GooglePhotoSlideshow\Commands\ReIndexAlbum;
 
 class GooglePhotoSlideshowProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     */
     public function register()
     {
     }
 
-    /**
-     * Bootstrap any application services.
-     *
-     */
     public function boot()
     {
         $this->registerCommands();

@@ -130,7 +130,7 @@ class IndexPhotos extends Command
     {
         $pathToImage = '/' . trim(config('photos.storage_path'), '/') . '/' . $pathToImage;
         $image = Image::make($pathToImage);
-        $image->resize(null, self::MAX_HEIGHT, function ($constraint) {
+        $image->resize(self::MAX_WIDTH, self::MAX_HEIGHT, function ($constraint) {
             $constraint->aspectRatio();
         });
         $image->resizeCanvas(self::MAX_WIDTH, self::MAX_HEIGHT, 'center', false, '000000');

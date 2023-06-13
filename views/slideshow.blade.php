@@ -43,7 +43,6 @@
 			background-position: center;
 			background-size: cover;
 			background-repeat: no-repeat;
-			/* background-image: url(photos/323/AMPTTLcCFsDyGh-R8cenM4vun0DyNrNBYJCc8Mxhv8W7SESpJ_rE9JUaoWsH2g2xr_vmsr_YYHllqCj2QlFpNlS7DSCTNV5vUg.jpg); */
 		}
 
 		.caption {
