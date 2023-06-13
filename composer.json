@@ -1,0 +1,42 @@
+{
+    "name": "dmlogic/google-photos-slideshow",
+    "type": "library",
+    "description": "Automatically download your Google Photos and display them as a rolling, randomised slideshow on your TV or photo frame",
+    "keywords": ["laravel", "google photos"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "google/apiclient": "^2.12",
+        "google/photos-library": "^1.7",
+        "intervention/image": "^2.7"
+    },
+    "require-dev": {
+        "laravel/framework": "^10",
+        "friendsofphp/php-cs-fixer": "^3.3",
+        "phpstan/phpstan": "^1.2"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DmLogic\\GooglePhotoSlideshow\\Providers\\GooglePhotoSlideshowProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "DmLogic\\GooglePhotoSlideshow\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "phpunit": "./vendor/bin/phpunit --testdox",
+        "phpcs": "./vendor/bin/php-cs-fixer fix -v --diff --allow-risky=yes --verbose --format=txt --dry-run",
+        "phpcs-fix": "docker-compose exec -T project ./vendor/bin/php-cs-fixer fix -v --diff --allow-risky=yes --verbose --format=txt",
+        "phpstan": "./vendor/bin/phpstan analyse ./src --level=0 --ansi"
+    }
+}
