@@ -13,6 +13,12 @@ composer config minimum-stability dev
 composer install
 composer require dmlogic/google-photos-slideshow
 
+# We don't want any included routes
+> routes/api.php
+> routes/channels.php
+> routes/console.php
+> routes/web.php
+
 # Complete the Laravel install
 composer run-script post-root-package-install
 composer run-script post-create-project-cmd

@@ -26,6 +26,7 @@ class GooglePhotoSlideshowProvider extends ServiceProvider
         $this->registerRoutes();
         $this->setConfigValues();
         $this->registerMigrations();
+        $this->registerViews();
     }
 
     private function registerCommands(): void
@@ -48,7 +49,7 @@ class GooglePhotoSlideshowProvider extends ServiceProvider
     {
         // Allows values to be picked up from .env
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/photos.php',
+            __DIR__ . '/../../config/photos.php',
             'photos'
         );
 
@@ -65,6 +66,11 @@ class GooglePhotoSlideshowProvider extends ServiceProvider
 
     private function registerMigrations(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+    }
+
+    private function registerViews(): void
+    {
+        $this->loadViewsFrom(__DIR__ . '/../../views', 'photos');
     }
 }
