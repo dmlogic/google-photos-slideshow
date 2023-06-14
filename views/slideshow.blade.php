@@ -113,9 +113,9 @@
 		<div class="date"></div>
 	</div>
 	<div class="controls">
-		<i id="previous" class="control fa-solid fa-caret-left hidden"></i>
+		<i id="previous" data-adjustment="1" class="control fa-solid fa-caret-left hidden"></i>
 		<i id="toggle" class="control fa-solid fa-pause"></i>
-		<i id="next" class="control fa-solid fa-caret-right hidden"></i>
+		<i id="next" data-adjustment="-1" class="control fa-solid fa-caret-right hidden"></i>
 	</div>
 	<div class="loading">
 		<i class="fa-solid fa-wifi fa-bounce"></i>
@@ -182,28 +182,6 @@
 			imageElement.style.backgroundImage = "url('" + imageData.url + "')";
 			titleElement.innerText = imageData.album_title;
 			dateElement.innerText = imageData.date_taken;
-			updateHistory(imageData);
-		}
-
-		function updateHistory(imageData) {
-			if (photoHistoryPosition === 0) {
-				photoHistory.push(imageData);
-				if (photoHistory.length > 50) {
-					photoHistory.shift();
-				}
-			}
-
-			if (photoHistory.length > 0 && photoHistoryPosition !== photoHistory.length) {
-				historyBack.classList.remove("hidden")
-			} else {
-				historyBack.classList.add("hidden")
-			}
-
-			if (photoHistory.length > 0 && photoHistoryPosition > 0) {
-				historyForward.classList.remove("hidden")
-			} else {
-				historyForward.classList.add("hidden")
-			}
 		}
 
 		function displayPrimedImage() {
@@ -211,20 +189,23 @@
 		}
 
 		function getNextImage() {
+			if (nextImage) {
+				addToHistory(nextImage);
+			}
 			result = performApiCall('/photo/random');
 			primeNextImage(result);
 			slideshowTimer = setTimeout(slideTimerFinished, photoDelay);
 		}
 
 		function slideTimerFinished() {
-			displayPrimedImage(nextImage);
+			displayPrimedImage();
 			getNextImage()
 		}
 
 		function displayFirstImage() {
 			result = performApiCall('/photo/random');
 			primeNextImage(result);
-			displayPrimedImage(nextImage);
+			displayPrimedImage();
 			getNextImage()
 		}
 
@@ -240,8 +221,8 @@
 			toggle.classList.add('fa-pause');
 			if (nextImage) {
 				displayPrimedImage(nextImage);
-				getNextImage()
 			}
+			getNextImage()
 		}
 
 		function toggleClicked() {
@@ -252,14 +233,43 @@
 			resumeSlideshow();
 		}
 
+		function addToHistory(imageData) {
+			if (photoHistoryPosition === 0) {
+				photoHistory.unshift(imageData);
+				if (photoHistory.length > 50) {
+					photoHistory.shift();
+				}
+			}
+			updateHistoryButtonDisplay()
+		}
+
+		function updateHistoryButtonDisplay() {
+			if (photoHistory.length > 1 && photoHistoryPosition !== (photoHistory.length - 1)) {
+				historyBack.classList.remove("hidden")
+			} else {
+				historyBack.classList.add("hidden")
+			}
+			if (photoHistory.length > 1 && photoHistoryPosition > 0) {
+				historyForward.classList.remove("hidden")
+			} else {
+				historyForward.classList.add("hidden")
+			}
+		}
+
+		function historyClicked(event) {
+			pauseSlideshow();
+			nextImage = null;
+			photoHistoryPosition = photoHistoryPosition + (parseInt(event.target.getAttribute('data-adjustment')));
+			changeImageDisplay(photoHistory[photoHistoryPosition])
+			updateHistoryButtonDisplay();
+		}
+
 		window.addEventListener("mousemove", toggleControls);
 		toggle.addEventListener("click", toggleClicked);
+		historyBack.addEventListener("click", historyClicked);
+		historyForward.addEventListener("click", historyClicked);
 
 		displayFirstImage();
-		/**
-# historyBack clicked
-# historyForward clicked
-		 */
 	</script>
 </body>
 
