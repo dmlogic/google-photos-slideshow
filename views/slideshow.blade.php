@@ -129,7 +129,7 @@
 		 */
 		var photoHistory = [],
 			photoHistoryPosition = 0,
-			photoDelay = 2000,
+			photoDelay = <?=config('photos.delay')?> ,
 			controls = document.querySelector(".controls"),
 			loading = document.querySelector(".loading"),
 			toggle = document.querySelector("#toggle"),

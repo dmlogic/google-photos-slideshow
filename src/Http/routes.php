@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use DmLogic\GooglePhotoSlideshow\Http\Controllers\ImageController;
 use DmLogic\GooglePhotoSlideshow\Http\Controllers\SlideshowContoller;
 use DmLogic\GooglePhotoSlideshow\Http\Controllers\GoogleOAuthController;
-use DmLogic\GooglePhotoSlideshow\Http\Controllers\ImageController;
 
 Route::get('/', function () {
     return view('photos::slideshow');
@@ -16,7 +16,8 @@ Route::controller(SlideshowContoller::class)->group(function () {
 });
 
 Route::get('/image/{path}', ImageController::class)
-     ->where('path', '[A-Za-z_0-9/\.]+');;
+     ->where('path', '[A-Za-z_0-9-\/\.]+');
+;
 
 Route::get('/google-oauth/start', [GoogleOAuthController::class, 'start'])
      ->name('oauth.start');

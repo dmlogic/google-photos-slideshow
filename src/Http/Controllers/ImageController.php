@@ -10,7 +10,7 @@ class ImageController extends Controller
     public function __invoke($url)
     {
         $path = config('photos.storage_path') . '/' . $url;
-        if(!file_exists($path)) {
+        if (!file_exists($path)) {
             abort(404);
         }
         return $this->generateImage($path)->response();
