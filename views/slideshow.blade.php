@@ -14,7 +14,7 @@
 	<script src="https://kit.fontawesome.com/70bfe3d00e.js" crossorigin="anonymous"></script>
 	<!-- CSS -->
 	<!--
-		TVs have a long shelf life which likely means browsers that are not compatible with modern JS packaing.
+		TVs have a long shelf life which likely means browsers that are not compatible with modern JS packaging.
 		Not interested in Babeling this so we're avoid Tailwind etc and going old-school basic CSS
 	 -->
 	<style>

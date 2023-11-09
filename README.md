@@ -38,7 +38,22 @@ As a package, this requires a host Laravel app. I _really_ hate dealing with [la
 
 ### Accessing via a Web Interface
 
-@todo - instructions for raspi webserver and recommended config
+Assuming this is on a Raspberry PI and PHP has been installed, the Apache2 webserver should already be available, so it makes sense to use that to server a web interface. This will also provide pause and rewind control not available when connecting directly to the HDMI interface.
+
+1. Make sure Apache is running with the PHP mod enabled
+2. Adjust the default Apache site config to point at the PHP project for example:
+```
+DocumentRoot /home/pi/google-photos-slideshow/build/public
+<Directory /home//pi/google-photos-slideshow/build/public/>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order allow,deny
+    allow from all
+    Require all granted
+</Directory>
+```
+3. Permissions can be tricky on the downloaded images. I had best success by adding the `pi` user to the `www-group`, setting ownership of the photos folder to `pi:www-data` and adjusting the `APACHE_RUN_USER` envvar to `pi`
+4. Restart Apache with the above amends and you should have a working slideshow
 
 ## Upgrading
 
